@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edwin Tuan - Developer Portfolio</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="hacker_theme.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Import theme variables */
+        @import url('hacker_theme.css');
+        
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-mono) !important;
+            background-color: var(--background) !important;
+            color: var(--foreground) !important;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            letter-spacing: var(--tracking-normal);
+        }
+        
+        /* Terminal Container */
+        .terminal {
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                );
+        }
+        
+        /* CRT Effect */
+        .terminal::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 0, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            animation: scanline 8s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+        
+        /* Terminal Window */
+        .terminal-window {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card);
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+        }
+        
+        /* Terminal Header */
+        .terminal-header {
+            background: var(--secondary);
+            padding: 10px 15px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .terminal-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+        }
+        
+        .terminal-button.close { background: #ff5f56; }
+        .terminal-button.minimize { background: #ffbd2e; }
+        .terminal-button.maximize { background: #27c93f; }
+        
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted-foreground);
+        }
+        
+        /* Terminal Content */
+        .terminal-content {
+            padding: 30px;
+            min-height: calc(100vh - 100px);
+        }
+        
+        /* Typing Effect */
+        .typing {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(40, end);
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        
+        /* Cursor */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: var(--primary);
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        /* Command Line */
+        .command-line {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+        
+        .prompt {
+            color: var(--accent);
+            margin-right: 10px;
+        }
+        
+        /* ASCII Art Container */
+        .ascii-art {
+            font-size: 12px;
+            line-height: 1.2;
+            color: var(--primary);
+            white-space: pre;
+            margin: 20px 0;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Info Box */
+        .info-box {
+            border: 2px solid var(--border);
+            padding: 15px;
+            margin: 20px 0;
+            position: relative;
+            background: var(--card);
+        }
+        
+        .info-box::before {
+            content: "╔";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            color: var(--primary);
+        }
+        
+        .info-box::after {
+            content: "╝";
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            color: var(--primary);
+        }
+        
+        /* Skills Tree */
+        .tree-view {
+            font-size: 14px;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+        
+        .tree-item {
+            padding-left: 20px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .tree-item:hover {
+            color: var(--accent);
+            text-shadow: var(--shadow-sm);
+            transform: translateX(5px);
+        }
+        
+        /* Project Cards */
+        .project-card {
+            border: 1px solid var(--border);
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.1;
+            transition: left 0.5s;
+        }
+        
+        .project-card:hover::before {
+            left: 100%;
+        }
+        
+        .project-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        /* Links */
+        .terminal-link {
+            color: var(--accent);
+            text-decoration: none;
+            position: relative;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        
+        .terminal-link::after {
+            content: "_";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        
+        .terminal-link:hover::after {
+            width: 100%;
+        }
+        
+        .terminal-link:hover {
+            text-shadow: var(--shadow-sm);
+        }
+        
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            animation: glitch 2s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-1px, 1px); }
+            40% { transform: translate(-1px, -1px); }
+            60% { transform: translate(1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { content: "."; }
+            33% { content: ".."; }
+            66% { content: "..."; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .terminal-content {
+                padding: 20px;
+            }
+            
+            .ascii-art {
+                font-size: 8px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                </div>
+                <div class="terminal-title">edwin@localhost:~/portfolio</div>
+            </div>
+            
+            <div class="terminal-content">
+                <!-- Welcome Message -->
+                <div class="command-line">
+                    <span class="prompt">></span>
+                    <span class="typing">edwin_tuan@localhost:~$ whoami</span>
+                    <span class="cursor"></span>
+                </div>
+                
+                <!-- ASCII Art and Info -->
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="ascii-art">
+     _____ ____  _    _ _____ _   _ 
+    |  ___|  _ \| |  | |_   _| \ | |
+    | |__ | | | | |  | | | | |  \| |
+    |  __|| | | | |/\| | | | | . ` |
+    | |___| |_| \  /\  /_| |_| |\  |
+    \____/|____/ \/  \/ \___/\_| \_/
+                    </div>
+                    
+                    <div class="info-box">
+                        <h2 class="text-xl mb-4 glitch">SYSTEM INFO</h2>
+                        <div class="space-y-2">
+                            <div><span class="text-muted-foreground">NAME:</span> <span class="text-accent">Edwin Tuan</span></div>
+                            <div><span class="text-muted-foreground">LOCATION:</span> <span class="text-accent">London, UK</span></div>
+                            <div><span class="text-muted-foreground">ROLE:</span> <span class="text-accent">Theoretical Physics Student</span></div>
+                            <div><span class="text-muted-foreground">INTERESTS:</span> <span class="text-accent">Geeker & Developer, Web3 & Crypto</span></div>
+                            <div><span class="text-muted-foreground">STATUS:</span> <span class="text-green-400">ONLINE</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- About Section -->
+                <div class="command-line mt-8">
+                    <span class="prompt">></span>
+                    <span>ls ./about/ -la</span>
+                </div>
+                
+                <div class="tree-view">
+                    <div class="tree-item">drwxr-xr-x  education/</div>
+                    <div class="tree-item ml-4">-rw-r--r--  bachelor_of_science.degree</div>
+                    <div class="tree-item ml-4">-rw-r--r--  university_college_london.edu</div>
+                    <div class="tree-item ml-4">-rw-r--r--  physics_major.study</div>
+                    <div class="tree-item ml-4">-rw-r--r--  mathematical_and_physical_college.faculty</div>
+                    
+                    <div class="tree-item mt-2">drwxr-xr-x  interests/</div>
+                    <div class="tree-item ml-4">-rw-r--r--  theoretical_physics.research</div>
+                    <div class="tree-item ml-4">-rw-r--r--  programming.dev</div>
+                    <div class="tree-item ml-4">-rw-r--r--  web3.blockchain</div>
+                    <div class="tree-item ml-4">-rw-r--r--  cryptocurrency.wallet</div>
+                    
+                    <div class="tree-item mt-2">drwxr-xr-x  timeline/</div>
+                    <div class="tree-item ml-4">-rwxr-xr-x  2025_present_ucl_student</div>
+                    <div class="tree-item ml-4">-rwxr-xr-x  london_uk_residence</div>
+                    <div class="tree-item ml-4">-rwxr-xr-x  physics_mathematics_focus</div>
+                </div>
+                
+                <!-- Education Section -->
+                <div class="command-line mt-8">
+                    <span class="prompt">></span>
+                    <span>cat ./education.txt</span>
+                </div>
+                
+                <div class="mt-4 space-y-4">
+                    <div class="project-card">
+                        <h3 class="text-lg mb-2"><span class="text-muted-foreground">[0x01]</span> <span class="text-accent">Bachelor of Science</span></h3>
+                        <p class="text-sm text-muted-foreground mb-2">Physics at University College London - Mathematical and Physical College</p>
+                        <div class="text-xs">
+                            <span class="text-yellow-400">STATUS: 2025 - PRESENT</span> | 
+                            <span class="text-green-400">ACTIVE STUDENT</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Section -->
+                <div class="command-line mt-8">
+                    <span class="prompt">></span>
+                    <span>echo $CONTACT</span>
+                </div>
+                
+                <div class="mt-4 flex flex-wrap gap-6">
+                    <a href="mailto:edwin.tuan@outlook.com" class="terminal-link flex items-center gap-2">
+                        <span class="text-muted-foreground">[</span>Email<span class="text-muted-foreground">]</span>
+                    </a>
+                    <a href="https://github.com/edwin0n0" class="terminal-link flex items-center gap-2">
+                        <span class="text-muted-foreground">[</span>GitHub<span class="text-muted-foreground">]</span>
+                    </a>
+                    <a href="https://x.com/yuhsiangtuan" class="terminal-link flex items-center gap-2">
+                        <span class="text-muted-foreground">[</span>X(Twitter)<span class="text-muted-foreground">]</span>
+                    </a>
+                    <a href="https://instagram.com/kakeya_ed" class="terminal-link flex items-center gap-2">
+                        <span class="text-muted-foreground">[</span>Instagram<span class="text-muted-foreground">]</span>
+                    </a>
+                    <a href="https://www.v2ex.com/member/dollck" class="terminal-link flex items-center gap-2">
+                        <span class="text-muted-foreground">[</span>V2EX<span class="text-muted-foreground">]</span>
+                    </a>
+                    <a href="https://www.xiaohongshu.com/user/profile/64bcd78d000000001403baf9" class="terminal-link flex items-center gap-2">
+                        <span class="text-muted-foreground">[</span>RedNote<span class="text-muted-foreground">]</span>
+                    </a>
+                    <div class="terminal-link flex items-center gap-2 cursor-pointer" onclick="copyToClipboard('EmUBLgR9DR1YwxZQQcvuvRoC3yLBa6UJfTR4nop9xkfj')">
+                        <span class="text-muted-foreground">[</span>Solana<span class="text-muted-foreground">]</span>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="command-line mt-12">
+                    <span class="prompt">></span>
+                    <span class="text-muted-foreground">_</span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add typing effect to elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate terminal loading
+            const elements = document.querySelectorAll('.tree-item, .project-card');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.3s ease-out';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+            
+            // Add random glitch effect
+            setInterval(() => {
+                const glitchElements = document.querySelectorAll('.glitch');
+                glitchElements.forEach(el => {
+                    if (Math.random() > 0.95) {
+                        el.style.transform = `translate(${Math.random() * 4 - 2}px, ${Math.random() * 4 - 2}px)`;
+                        setTimeout(() => {
+                            el.style.transform = 'translate(0, 0)';
+                        }, 50);
+                    }
+                });
+            }, 100);
+        });
+
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Solana地址已复制: ' + text);
+            }).catch(() => {
+                alert('复制失败');
+            });
+        }
+    </script>
+</body>
+</html>
